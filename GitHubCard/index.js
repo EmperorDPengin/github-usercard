@@ -1,8 +1,38 @@
+import axios from 'axios';
+import { async } from 'fast-glob';
 /*
   STEP 1: using axios, send a GET request to the following URL
     (replacing the placeholder with your Github name):
     https://api.github.com/users/<your name>
 */
+
+const followersArray = [
+  'emperordpengin',
+  'tetondan',
+  'dustinmyers',
+  'justsml',
+  'luishrd',
+  'bigknell'
+];
+
+
+followersArray.forEach ( follower => {
+  axios.get(`https://api.github.com/users/${follower}`)
+  .then( resp => {
+    console.log(resp.data);
+    const userCard = createUserCard(resp.data);
+    document.querySelector('.cards').appendChild(userCard);
+  })
+  .catch( err => {
+    const errorText = document.createElement('p');
+    errorText.textContent = "error found";
+    document.querySelector('.container').appendChild(errorText);
+  })
+  .finally( () => {
+    console.log('finally');
+  })
+});
+
 
 /*
   STEP 2: Inspect and study the data coming back, this is YOUR
@@ -28,7 +58,7 @@
     user, and adding that card to the DOM.
 */
 
-const followersArray = [];
+
 
 /*
   STEP 3: Create a function that accepts a single object as its only argument.
@@ -49,6 +79,54 @@ const followersArray = [];
       </div>
     </div>
 */
+function createElement(elemType){
+  return document.createElement(elemType);
+}
+
+function createUserCard(userData){
+  //create elements
+  const card = createElement('DIV');
+  const userImage = createElement('img');
+  const cardInfo = createElement('DIV');
+  const name = createElement('h3');
+  const username = createElement('p');
+  const location = createElement('p');
+  const profile = createElement('p');
+  const profileLink = createElement('a');
+  const followers = createElement('p');
+  const following = createElement('p');
+
+  //add classes to elements
+  card.classList.add('card');
+  cardInfo.classList.add('card-info');
+  name.classList.add('name');
+  username.classList.add('username');
+
+  //filling Elements UP!
+  userImage.src = userData.avatar_url;
+  name.textContent = userData.name;
+  username.textContent = userData.login;
+  location.textContent = `Location ${userData.location}`;
+  profile.textContent = `Profile: `
+  profileLink.href = userData.html_url;
+  profileLink.textContent = userData.html_url;
+  followers.textContent = userData.followers;
+  following.textContent = userData.following;
+
+  //attach elements
+  card.appendChild(userImage);
+  card.appendChild(cardInfo);
+  cardInfo.appendChild(name);
+  cardInfo.appendChild(username);
+  cardInfo.appendChild(location);
+  cardInfo.appendChild(profile);
+  profile.appendChild(profileLink);
+  cardInfo.appendChild(followers);
+  cardInfo.appendChild(following);
+
+  //return the element
+  return card;
+}
 
 /*
   List of LS Instructors Github username's:
@@ -58,3 +136,5 @@ const followersArray = [];
     luishrd
     bigknell
 */
+
+
